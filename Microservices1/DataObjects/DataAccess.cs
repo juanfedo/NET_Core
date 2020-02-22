@@ -1,27 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Data.SqlClient;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Data;
-using Microsoft.Extensions.Configuration;
+using System.Data.SqlClient;
 
 namespace Microservices1.DataObjects
 {
     public class DataAccess
     {
         SqlConnection _connection;
-        private readonly IConfiguration _config;
 
         public SqlConnection GetConnection() {
+            var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false).Build();
             if (_connection == null)
-                _connection = new SqlConnection("server=DESKTOP-9183MDS\\SQLEXPRESS;database=test;User Id=sa;Password=patojo");
+                _connection = new SqlConnection(configuration.GetConnectionString("dbcon"));
             return _connection;
         }
 
         public DataAccess()
         {
-            //_config = config;
         }
 
         public string ExecuteNonQuery(string query) {
@@ -48,9 +44,16 @@ namespace Microservices1.DataObjects
             {
                 SqlCommand command = new SqlCommand(query,con);
                 DataTable temp = new DataTable();
-                command.Connection.Open();
-                temp.Load(command.ExecuteReader());
-                command.Connection.Close();
+                try
+                {
+                    command.Connection.Open();
+                    temp.Load(command.ExecuteReader());
+                    command.Connection.Close();
+                }
+                catch 
+                {
+                    return null;
+                }
                 return temp;
             }
         }

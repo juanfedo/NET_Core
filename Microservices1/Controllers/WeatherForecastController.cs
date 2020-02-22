@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microservices1.DataObjects;
+﻿using Microservices1.DataObjects;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Microservices1.Controllers
 {
